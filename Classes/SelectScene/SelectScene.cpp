@@ -2,9 +2,7 @@
 #include "Tool.h"
 USING_NS_CC;
 
-#ifndef SELECT__CHECK__MAX
-#define SELECT__CHECK__MAX 32
-#endif
+
 SelectScene::SelectScene()
 {
 }
