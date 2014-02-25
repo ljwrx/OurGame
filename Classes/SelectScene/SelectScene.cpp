@@ -14,14 +14,6 @@ SelectScene::~SelectScene()
 {
 }
 
-void SelectScene::_checkCanUse(int s_canUse,int max)
-{
-	for (int index; index < max; ++index)
-	{
-
-	}
-}
-
 bool SelectScene::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel)
 {
 	if (!Scene::init())

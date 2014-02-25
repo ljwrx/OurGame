@@ -9,6 +9,8 @@ class SelectLayer :public cocos2d::Layer
 {
 public:
 	~SelectLayer();
+	bool initWithData(int data, int canSel);
+	static SelectLayer* createWithData(int data, int canSel);
 private:
 	SelectLayer();
 };
