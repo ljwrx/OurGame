@@ -17,6 +17,10 @@ public:
 	static SelectScene* createWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel);
 private:
 	SelectScene();
+
+	void _checkCanUse(int s_canUse, int max);
+
+private:
 };
 
 #endif
