@@ -14,7 +14,7 @@ namespace TOOL
 	//num	元数据
 	//index 需要更改的字节位置
 	//flag	更改的数据
-	inline int SetBinNum(int& num, int index, int flag);
+	inline void SetBinNum(int& num, int index, int flag);
 
 	//num	元数据
 	//index	需要获取的数据所在的组
@@ -25,6 +25,6 @@ namespace TOOL
 	//index 需要获取的数据所在的组
 	//flag	更改的数据
 	//num以16位为一组,即一组为一个0x000000FF
-	inline int SetHexNum(int& num, int index, int flag);
+	inline void SetHexNum(int& num, int index, int flag);
 };
 #endif
