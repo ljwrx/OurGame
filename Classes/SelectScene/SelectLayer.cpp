@@ -1,5 +1,6 @@
 #include "SelectLayer.h"
-#include "Tool.h"
+#include "ScissorSpriteNode.h"
+#include "..\Tool.h"
 USING_NS_CC;
 
 #ifndef SELECT__CHECK__MAX
@@ -18,15 +19,11 @@ SelectLayer::~SelectLayer()
 
 void SelectLayer::_setImageFromData(int data, bool flag)
 {
-	int local;
-	int count;
-	String str;
+	int count = 0;
+	cocos2d::String str;
 	Sprite* temp = nullptr;
 	Size winSize = Director::getInstance()->getVisibleSize();
-	if (flag)
-		local = -1;
-	else
-		local = 1;
+
 
 	for (int index = 0; index < SELECT__CHECK__MAX; ++index)
 	{

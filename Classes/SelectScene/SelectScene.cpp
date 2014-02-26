@@ -1,5 +1,4 @@
 #include "SelectScene.h"
-#include "Tool.h"
 USING_NS_CC;
 
 

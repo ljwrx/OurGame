@@ -28,7 +28,7 @@ private:
 private:
 	int _count;
 	int _selectData;
-	cocos2d::Vector<Sprite*> _list;
+	cocos2d::Vector<cocos2d::Sprite*> _list;
 };
 
 
