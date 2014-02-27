@@ -7,6 +7,7 @@
 class ScissorSpriteNode:public cocos2d::Sprite
 {
 public:
+	ScissorSpriteNode();
 	~ScissorSpriteNode();
 
 	static ScissorSpriteNode* create();
@@ -20,9 +21,6 @@ public:
 	static ScissorSpriteNode* createWithSpriteFrameName(const std::string& spriteFrameName);
 
 	void visit();
-private:
-	ScissorSpriteNode();
-
 };
 
 #endif
