@@ -9,8 +9,10 @@ class SelectSprite : public ScissorSpriteNode
 public:
 	~SelectSprite();
 
-	virtual bool init(const std::string& filename, int data);
-	static SelectSprite* create(const std::string& filename, int data);
+	int CheckPointIn(cocos2d::Point& touch_point);
+
+	virtual bool init(const std::string& filename, int data, bool flag);
+	static SelectSprite* create(const std::string& filename, int data, bool flag);
 
 private:
 	SelectSprite();

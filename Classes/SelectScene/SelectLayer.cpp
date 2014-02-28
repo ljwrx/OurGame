@@ -44,6 +44,10 @@ bool SelectLayer::initWithData(int data, int canSel, bool flag)
 {
 	if (!Layer::init())
 		return false;
+
+	//¸ÃÍ¼²ã¼ÓÈë´¥ÃþÅÐ¶Ï
+	this->setTouchEnabled(true);
+	this->setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
 	
 
 	return true;

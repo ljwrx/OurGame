@@ -8,6 +8,7 @@ class SelectScene :public cocos2d::Scene
 public:
 	~SelectScene();
 
+
 	bool initWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel);
 
 	//s_canUse 士兵的是否可用标识
