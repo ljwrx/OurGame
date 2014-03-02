@@ -9,7 +9,7 @@ namespace TOOL
 	//index	需要获取的位置
 	inline int GetBinNum(int num, int index)
 	{
-		return (num << (index - 1)) & 1;
+		return (num >> (index - 1)) & 1;
 	}
 
 
@@ -42,6 +42,27 @@ namespace TOOL
 		num = (num&~(0x000000FF << index)) | (flag << 8 * index);
 	}
 
+
+	//获取高位数据
+	inline int GetHigData(int num)
+	{
+		return num >> 16;
+	}
+
+	//获取低位数据
+	inline int GetLowData(int num)
+	{
+		return num & 0x0000FFFF;
+	}
+
+	//num	需要更改的数据
+	//flag	0为低位 1为高位
+	//设置高位数据
+	inline void SetHigOrLowData(int& num, int data, int flag)
+	{
+		num = (num & (0xFFFF0000 >> (16 * flag))) | (flag << (16 * flag));
+	}
 };
+
 
 #endif

@@ -1,5 +1,5 @@
 #include "SelectLayer.h"
-#include "ScissorSpriteNode.h"
+#include "SelectSprite.h"
 #include "..\Tool.h"
 USING_NS_CC;
 
@@ -17,46 +17,26 @@ SelectLayer::~SelectLayer()
 
 }
 
-void SelectLayer::_setImageFromData(int data, bool flag)
-{
-	int count = 0;
-	cocos2d::String str;
-	Sprite* temp = nullptr;
-	Size winSize = Director::getInstance()->getVisibleSize();
 
-
-	for (int index = 0; index < SELECT__CHECK__MAX; ++index)
-	{
-		if (TOOL::GetBinNum(data, index))
-		{
-			++count;
-			if (flag)
-				str.initWithFormat("i_%d.png", index);
-			else
-				str.initWithFormat("s_%d.png", index);
-			temp = Sprite::create(str.getCString());
-			temp->setAnchorPoint(Point(0.5, 0.5));
-		}
-	}
-}
-
-bool SelectLayer::initWithData(int data, int canSel, bool flag)
+bool SelectLayer::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel)
 {
 	if (!Layer::init())
 		return false;
 
 	//¸ÃÍ¼²ã¼ÓÈë´¥ÃþÅÐ¶Ï
-	this->setTouchEnabled(true);
-	this->setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
+//	this->setTouchEnabled(true);
+//	this->setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
 	
-
+	Sprite* sp = SelectSprite::create("\\res\\SelectScene\\select_candidate.png", s_canUse, 0);
+	sp->setPosition(0,0);
+	this->addChild(sp);
 	return true;
 }
 
-SelectLayer* SelectLayer::createWithData(int data, int canSel, bool flag)
+SelectLayer* SelectLayer::createWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel)
 {
 	SelectLayer* pRet = new SelectLayer();
-	if (pRet || pRet->initWithData(data, canSel, flag))
+	if (pRet && pRet->initWithData(s_canUse, s_canSel, i_canUse, i_canSel))
 		pRet->autorelease();
 	else
 	{

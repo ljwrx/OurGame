@@ -4,6 +4,11 @@
 #ifndef SELECT__DATA__MAX
 #define SELSCT__DATA__MAX 32
 #endif
+
+#ifndef CHECK__NOT__IN__SPRITE
+#define CHECK__NOT__IN__SPRITE 0x0000FFFF
+#endif
+
 USING_NS_CC;
 SelectSprite::SelectSprite()
 {
@@ -33,11 +38,11 @@ void SelectSprite::_setImageFromData(int data, bool flag)
 
 	for (int index = 0; index < SELSCT__DATA__MAX; ++index)
 	{
-		if (TOOL::GetBinNum(data, index))
+		if (TOOL::GetBinNum(data, index+1))
 		{
-			str.initWithFormat("\\res\\%s\\icon\\%d.png", ch, index);
+			str.initWithFormat("\\res\\%c\\icon\\%d.png", ch, index);
 			temp = Sprite::create(str.getCString());
-			temp->setPosition(5 + temp->getContentSize().width*index, positionY);
+			temp->setPosition(temp->getContentSize().width*(0.5+(count++)), positionY);
 			layer->addChild(temp);
 		}
 	}
@@ -45,7 +50,7 @@ void SelectSprite::_setImageFromData(int data, bool flag)
 	layer->setAnchorPoint(Point::ZERO);
 	this->setAnchorPoint(Point::ZERO);
 	layer->setPosition(Point::ZERO);
-	this->addChild(layer);
+	this->addChild(layer, 0);
 
 }
 
@@ -78,7 +83,15 @@ SelectSprite* SelectSprite::create(const std::string& filename, int data, bool f
 
 int SelectSprite::CheckPointIn(cocos2d::Point& touch_point)
 {
-	if (!this->boundingBox().containsPoint(touch_point))
+	if (!this->getBoundingBox().containsPoint(touch_point))
 		return 0;
+	Layer* layer = (Layer*)(this->getChildByTag(0));
+	int checkMax = layer->getChildrenCount();
 
+	for (int index = 0; index < checkMax; ++index)
+	{
+		if (layer->getChildByTag(index)->getBoundingBox().containsPoint(touch_point))
+			return index + 1;
+	}
+	return CHECK__NOT__IN__SPRITE;
 }
