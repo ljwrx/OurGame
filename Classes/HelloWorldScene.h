@@ -15,8 +15,16 @@ public:
     // a selector callback
     void menuCloseCallback(Object* pSender);
     
+	void onEnter(); 
+ 
+    void startGameCallback(Object* pSender); 
+    void aboutGameCallback(Object* pSender); 
+    void exitGameCallback(Object* pSender); 
+    void backGameCallback(Object* pSender); 
+
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
-};
+
+}; 
 
 #endif // __HELLOWORLD_SCENE_H__
