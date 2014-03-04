@@ -11,11 +11,15 @@ public:
 
 	int CheckPointIn(cocos2d::Point& touch_point);
 
-	void MoveUp(int dy){};
-	void MoveDown(int dx){};
+	//delta	移动的幅度
+	//flag	0为x轴 1为y轴
+	void Move(float delta, bool flag);
 
-	virtual bool init(const std::string& filename, int data, bool flag);
-	static SelectSprite* create(const std::string& filename, int data, bool flag);
+	virtual bool initWithData(const std::string& filename, int data, bool flag);
+	static SelectSprite* createWithData(const std::string& filename, int data, bool flag);
+
+	virtual bool initWithCountMax(const std::string& filename, int max, bool flag);
+	static SelectSprite* createWithCountMax(const std::string& filename, int max, bool flag);
 
 protected:
 	SelectSprite();

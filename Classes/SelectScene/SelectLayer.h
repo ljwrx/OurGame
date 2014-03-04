@@ -18,13 +18,20 @@ public:
 	//canSel	能选择的种类上限
 	//flag		0为士兵选择Layer，1为物品
 	static SelectLayer* createWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel);
-	
+
+
+	virtual bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	virtual void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	virtual void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+	virtual void onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *unused_event);
+
 private:
 	SelectLayer();
 private:
 	int _count;
 	int _selectData;
-	cocos2d::Vector<cocos2d::Sprite*> _list;
+	int _selectIndex;
+	cocos2d::Point _nowTouchPoint;
 };
 
 

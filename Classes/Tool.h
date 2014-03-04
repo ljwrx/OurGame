@@ -28,7 +28,7 @@ namespace TOOL
 	//num以16位为一组,即一组为一个0x000000FF
 	inline int GetHexNum(int num, int index)
 	{
-		return (num << (8 * (index - 1))) & 0x000000FF;
+		return (num >> (8 * (index - 1))) & 0x000000FF;
 	}
 
 
