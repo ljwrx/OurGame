@@ -7,6 +7,11 @@ USING_NS_CC;
 #define SELECT__CHECK__MAX 32
 #endif
 
+#define CANDIDATE_S_LAYER_TAG 0
+#define CANDIDATE_I_LAYER_TAG 1
+#define SELECTING_S_LAYER_TAG 2
+#define SELECTING_I_LAYER_TAG 3
+
 SelectLayer::SelectLayer()
 {
 
@@ -27,7 +32,7 @@ bool SelectLayer::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_c
 	Layer::setTouchEnabled(true);
 	Layer::setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
 	
-	Sprite* sp = SelectSprite::createWithData("\\res\\SelectScene\\select_candidate.png", s_canUse, 0);
+	Sprite* sp = SelectSprite::createWithData("\\res\\SelectScene\\select_candidate.png", _sList, s_canUse, 0);
 	sp->setPosition(0,0);
 	this->addChild(sp, 4, 0);
 
@@ -66,18 +71,29 @@ SelectLayer* SelectLayer::createWithData(int s_canUse, int s_canSel, int i_canUs
 
 bool SelectLayer::onTouchBegan(Touch *touch, Event *unused_event)
 {
-	int index = 0;
+	int layerIndex = 0;
+	int spriteIndex = 0;
 	_nowTouchPoint = touch->getLocation();
-	Vector<Node*> child((this->getChildren()));
 
-	if ((index = ((SelectSprite*)child.at(0))->CheckPointIn(_nowTouchPoint)))
-	{
-		TOOL::SetHigOrLowData(_selectIndex, 0, 1);
-		TOOL::SetHigOrLowData(_selectIndex, index, 0);
-		return true;
-	}
+	if (((SelectSprite*)(this->getChildByTag(CANDIDATE_S_LAYER_TAG)))->CheckPointIn(_nowTouchPoint))
+		layerIndex = CANDIDATE_S_LAYER_TAG;
+	else if (((SelectSprite*)(this->getChildByTag(CANDIDATE_I_LAYER_TAG)))->CheckPointIn(_nowTouchPoint))
+		layerIndex = CANDIDATE_I_LAYER_TAG;
+	else if (((SelectSprite*)(this->getChildByTag(SELECTING_S_LAYER_TAG)))->CheckPointIn(_nowTouchPoint))
+		layerIndex = SELECTING_S_LAYER_TAG;
+	else if (((SelectSprite*)(this->getChildByTag(SELECTING_I_LAYER_TAG)))->CheckPointIn(_nowTouchPoint))
+		layerIndex = SELECTING_I_LAYER_TAG;
 
-	return false;
+	if ((layerIndex == CANDIDATE_S_LAYER_TAG) || (layerIndex == SELECTING_S_LAYER_TAG))
+		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _sList);
+
+	else if ((layerIndex == CANDIDATE_I_LAYER_TAG) || (layerIndex == SELECTING_I_LAYER_TAG))
+		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _iList);
+
+	TOOL::SetHigOrLowData(_selectIndex, layerIndex, 1);
+	TOOL::SetHigOrLowData(_selectIndex, layerIndex, 0);
+
+	return true;
 }
 
 void SelectLayer::onTouchMoved(Touch *touch, Event *unused_event)

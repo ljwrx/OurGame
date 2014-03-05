@@ -26,10 +26,13 @@ SelectSprite::~SelectSprite()
 ///////           关于构造方法            ///////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-void SelectSprite::_setImageFromData(int data, bool flag)
+
+/////////////////////////////////////From Data
+
+void SelectSprite::_setImageFromData(Vector<Sprite*> &list, int data, bool flag)
 {
 	char ch;
-	int count = 0;
+	_count = 0;
 	cocos2d::String str;
 	Sprite* temp = nullptr;
 	Layer* layer = Layer::create();
@@ -46,8 +49,9 @@ void SelectSprite::_setImageFromData(int data, bool flag)
 		{
 			str.initWithFormat("\\res\\%c\\icon\\%d.png", ch, index);
 			temp = Sprite::create(str.getCString());
-			temp->setPosition(temp->getContentSize().width*(0.5+(count++)), positionY);
+			temp->setPosition(temp->getContentSize().width*(0.5+(_count++)), positionY);
 			layer->addChild(temp, index, index);
+			list.pushBack(temp);
 		}
 	}
 
@@ -58,19 +62,19 @@ void SelectSprite::_setImageFromData(int data, bool flag)
 
 }
 
-bool SelectSprite::initWithData(const std::string& filename, int data, bool flag)
+bool SelectSprite::initWithData(const std::string& filename, Vector<Sprite*> &list, int data, bool flag)
 {
 	if (!ScissorSpriteNode::initWithFile(filename))
 		return false;
-	_setImageFromData(data, flag);
+	_setImageFromData(list, data, flag);
 	return true;
 
 }
 
-SelectSprite* SelectSprite::createWithData(const std::string& filename, int data, bool flag)
+SelectSprite* SelectSprite::createWithData(const std::string& filename, Vector<Sprite*> &list, int data, bool flag)
 {
 	SelectSprite *sprite = new SelectSprite();
-	if (sprite && sprite->initWithData(filename, data, flag))
+	if (sprite && sprite->initWithData(filename, list, data, flag))
 	{
 		sprite->autorelease();
 		return sprite;
@@ -79,11 +83,12 @@ SelectSprite* SelectSprite::createWithData(const std::string& filename, int data
 	return nullptr;
 }
 
-bool SelectSprite::initWithCountMax(const std::string& filename, int max, bool flag)
+
+//////////////////////////////////////////////From Max
+void SelectSprite::_setImageFromCountMax(int max, bool flag)
 {
-	if (!ScissorSpriteNode::initWithFile(filename))
-		return false;
 	char* ch;
+	_count = 0;
 	Sprite* temp = nullptr;
 	Layer* layer = Layer::create();
 	int positionX = this->getContentSize().width / 2;
@@ -104,6 +109,13 @@ bool SelectSprite::initWithCountMax(const std::string& filename, int max, bool f
 	this->setAnchorPoint(Point::ZERO);
 	layer->setPosition(Point::ZERO);
 	this->addChild(layer, 0, LAYER__IN__SPRITE__TAG);
+}
+
+bool SelectSprite::initWithCountMax(const std::string& filename, int max, bool flag)
+{
+	if (!ScissorSpriteNode::initWithFile(filename))
+		return false;
+	_setImageFromCountMax(max, flag);
 	return true;
 }
 
@@ -125,19 +137,11 @@ SelectSprite* SelectSprite::createWithCountMax(const std::string& filename, int 
 
 //其他方法
 
-int SelectSprite::CheckPointIn(cocos2d::Point& touch_point)
+inline bool SelectSprite::CheckPointIn(cocos2d::Point& touch_point)
 {
 	if (!this->getBoundingBox().containsPoint(touch_point))
-		return 0;
-	Layer* layer = (Layer*)(this->getChildByTag(LAYER__IN__SPRITE__TAG));
-	int checkMax = layer->getChildrenCount();
-
-	for (int index = 0; index < checkMax; ++index)
-	{
-		if (layer->getChildByTag(index)->getBoundingBox().containsPoint(touch_point))
-			return index + 1;
-	}
-	return CHECK__NOT__IN__SPRITE;
+		return false;
+	return true;
 }
 
 void SelectSprite::Move(float delta, bool flag)
@@ -149,4 +153,14 @@ void SelectSprite::Move(float delta, bool flag)
 		layer->setPositionY(pos.y + delta);
 	else
 		layer->setPositionX(pos.x + delta);
+}
+
+void SelectSprite::InsterSprite(cocos2d::Sprite* sprite, bool flag)
+{
+
+}
+
+Sprite* SelectSprite::GetSpriteInfoIndex(unsigned int index, bool flag)
+{
+	return nullptr;
 }

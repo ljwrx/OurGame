@@ -27,11 +27,14 @@ public:
 
 private:
 	SelectLayer();
+	int _checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list){ return 0; }
 private:
 	int _count;
 	int _selectData;
 	int _selectIndex;
 	cocos2d::Point _nowTouchPoint;
+	cocos2d::Vector<cocos2d::Sprite*> _sList;
+	cocos2d::Vector<cocos2d::Sprite*> _iList;
 };
 
 
