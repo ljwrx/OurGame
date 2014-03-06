@@ -137,7 +137,7 @@ SelectSprite* SelectSprite::createWithCountMax(const std::string& filename, int 
 
 //其他方法
 
-inline bool SelectSprite::CheckPointIn(cocos2d::Point& touch_point)
+bool SelectSprite::CheckPointIn(cocos2d::Point& touch_point)
 {
 	if (!this->getBoundingBox().containsPoint(touch_point))
 		return false;

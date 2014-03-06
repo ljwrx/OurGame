@@ -7,6 +7,15 @@ USING_NS_CC;
 #define SELECT__CHECK__MAX 32
 #endif
 
+#define POINT__NOT__IN__SPRITE 0
+#define POINT__IN__SPRITE__INDEX(__index__) ++__index__
+#define INDEX__IN__SPRITE__LISTS(__index__) --__index__
+
+#define GET__SELECT__LAYER__INDEX TOOL::GetHigData(_selectIndex)
+#define GET__SELECT__SPRITE__INDEX TOOL::GetLowData(_selectIndex)
+#define SET__SELECT__LAYER__INDEX(__index__) TOOL::SetHigOrLowData(_selectIndex, __index__, 1)
+#define SET__SELECT__SPRITE__INDEX(__index__) TOOL::SetHigOrLowData(_selectIndex, __index__, 0)
+
 #define CANDIDATE_S_LAYER_TAG 0
 #define CANDIDATE_I_LAYER_TAG 1
 #define SELECTING_S_LAYER_TAG 2
@@ -36,18 +45,6 @@ bool SelectLayer::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_c
 	sp->setPosition(0,0);
 	this->addChild(sp, 4, 0);
 
-	//ScissorSpriteNode* node = ScissorSpriteNode::create("\\res\\SelectScene\\select_candidate.png");
-	//node->setAnchorPoint(Point::ZERO);
-	//node->setPosition(0, 0);
-
-	//Sprite* sp = Sprite::create("\\res\\SelectScene\\select_s_box.png");
-	//sp->setAnchorPoint(Point::ZERO);
-	//sp->setPosition(0, 100);
-	//node->addChild(sp);
-
-
-	//this->addChild(node);
-
 	return true;
 }
 
@@ -63,6 +60,17 @@ SelectLayer* SelectLayer::createWithData(int s_canUse, int s_canSel, int i_canUs
 		pRet = nullptr;
 	}
 	return pRet;
+}
+
+int SelectLayer::_checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list)
+{
+	int Max = list.size();
+	for (int index = 0; index < Max; ++index)
+	{
+		if (list.at(index)->getBoundingBox().containsPoint(touch_point))
+			return POINT__IN__SPRITE__INDEX(index);
+	}
+	return POINT__NOT__IN__SPRITE;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,15 +91,9 @@ bool SelectLayer::onTouchBegan(Touch *touch, Event *unused_event)
 		layerIndex = SELECTING_S_LAYER_TAG;
 	else if (((SelectSprite*)(this->getChildByTag(SELECTING_I_LAYER_TAG)))->CheckPointIn(_nowTouchPoint))
 		layerIndex = SELECTING_I_LAYER_TAG;
-
-	if ((layerIndex == CANDIDATE_S_LAYER_TAG) || (layerIndex == SELECTING_S_LAYER_TAG))
-		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _sList);
-
-	else if ((layerIndex == CANDIDATE_I_LAYER_TAG) || (layerIndex == SELECTING_I_LAYER_TAG))
-		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _iList);
-
-	TOOL::SetHigOrLowData(_selectIndex, layerIndex, 1);
-	TOOL::SetHigOrLowData(_selectIndex, layerIndex, 0);
+	else
+		return false;
+	SET__SELECT__LAYER__INDEX(layerIndex);
 
 	return true;
 }
@@ -99,18 +101,35 @@ bool SelectLayer::onTouchBegan(Touch *touch, Event *unused_event)
 void SelectLayer::onTouchMoved(Touch *touch, Event *unused_event)
 {
 	Point now = touch->getLocation();
-	int selectLayerIndex = TOOL::GetHigData(_selectIndex);
+	int selectLayerIndex = GET__SELECT__LAYER__INDEX;
 	Point delte(now.x - _nowTouchPoint.x, now.y - _nowTouchPoint.y);
 	((SelectSprite*)this->getChildByTag(0))->Move(delte.x, 0);
+
+	SET__SELECT__SPRITE__INDEX(POINT__NOT__IN__SPRITE);
 	_nowTouchPoint = now;
 }
 
 void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 {
+	int spriteIndex = 0;
+	int layerIndex = GET__SELECT__LAYER__INDEX;
 
+	if ((layerIndex == CANDIDATE_S_LAYER_TAG) || (layerIndex == SELECTING_S_LAYER_TAG))
+		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _sList);
+
+	else if ((layerIndex == CANDIDATE_I_LAYER_TAG) || (layerIndex == SELECTING_I_LAYER_TAG))
+		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _iList);
+
+	if (spriteIndex == 0)
+		return;
+	else if (spriteIndex == GET__SELECT__SPRITE__INDEX)
+	{
+		int a = 0;
+	}
+	else
+		SET__SELECT__SPRITE__INDEX(spriteIndex);
 }
 
 void SelectLayer::onTouchCancelled(Touch *touch, Event *unused_event)
 {
-	return;
 }

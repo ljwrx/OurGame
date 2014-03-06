@@ -60,7 +60,7 @@ namespace TOOL
 	//设置高位数据
 	inline void SetHigOrLowData(int& num, int data, int flag)
 	{
-		num = (num & (0xFFFF0000 >> (16 * flag))) | (flag << (16 * flag));
+		num = (num & (0xFFFF0000 >> (16 * flag))) | (data << (16 * flag));
 	}
 };
 

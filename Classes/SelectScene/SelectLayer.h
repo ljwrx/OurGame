@@ -27,7 +27,10 @@ public:
 
 private:
 	SelectLayer();
-	int _checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list){ return 0; }
+
+	//返回被触摸的对象，0为没有触摸
+	//返回的值减去1则为在list中的位置
+	int _checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list);
 private:
 	int _count;
 	int _selectData;
