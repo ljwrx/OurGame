@@ -93,7 +93,12 @@ bool SelectLayer::onTouchBegan(Touch *touch, Event *unused_event)
 		layerIndex = SELECTING_I_LAYER_TAG;
 	else
 		return false;
-	SET__SELECT__LAYER__INDEX(layerIndex);
+
+	if (layerIndex != GET__SELECT__LAYER__INDEX)//第二次点击时如果不是同一个选择栏则清空当前选中的ICON
+	{
+		SET__SELECT__LAYER__INDEX(layerIndex);
+		SET__SELECT__SPRITE__INDEX(0);
+	}
 
 	return true;
 }
@@ -112,6 +117,7 @@ void SelectLayer::onTouchMoved(Touch *touch, Event *unused_event)
 void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 {
 	int spriteIndex = 0;
+	Sprite* temp = nullptr;
 	int layerIndex = GET__SELECT__LAYER__INDEX;
 
 	if ((layerIndex == CANDIDATE_S_LAYER_TAG) || (layerIndex == SELECTING_S_LAYER_TAG))
@@ -120,13 +126,37 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 	else if ((layerIndex == CANDIDATE_I_LAYER_TAG) || (layerIndex == SELECTING_I_LAYER_TAG))
 		spriteIndex = _checkListInfoTouchPoint(_nowTouchPoint, _iList);
 
-	if (spriteIndex == 0)
+	if (spriteIndex == 0)//没有选中ICON
 		return;
-	else if (spriteIndex == GET__SELECT__SPRITE__INDEX)
+	else if (spriteIndex == GET__SELECT__SPRITE__INDEX)//第二次点击相同的ICON
 	{
-		int a = 0;
-	}
-	else
+		//进行ICON交换
+		int index = 2;
+		Sprite* temp = nullptr;
+		switch (layerIndex)
+		{
+		case CANDIDATE_S_LAYER_TAG:
+			index = 0;
+		case SELECTING_S_LAYER_TAG:
+			temp = _sList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
+			((SelectSprite*)this->getChildByTag(layerIndex))->removeChild(temp, true);
+			((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->addChild(temp);
+			break;
+
+		case CANDIDATE_I_LAYER_TAG:
+			index = 0;
+		case SELECTING_I_LAYER_TAG:
+			temp = _iList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
+			((SelectSprite*)this->getChildByTag(layerIndex))->removeChild(temp, true);
+			((SelectSprite*)this->getChildByTag(SELECTING_I_LAYER_TAG - index))->addChild(temp);
+			break;
+
+		default:
+			break;
+		}//switch layerIndex
+	}//else if
+
+	else//点击了其他的ICON
 		SET__SELECT__SPRITE__INDEX(spriteIndex);
 }
 
