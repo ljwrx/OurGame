@@ -37,13 +37,36 @@ bool SelectLayer::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_c
 	if (!Layer::init())
 		return false;
 
+	//获取窗口大小
+	Size winSize = cocos2d::Director::getInstance()->getWinSize();
+
 	//该图层加入触摸判断
 	Layer::setTouchEnabled(true);
 	Layer::setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
 	
-	Sprite* sp = SelectSprite::createWithData("\\res\\SelectScene\\select_candidate.png", _sList, s_canUse, 0);
-	sp->setPosition(0,0);
-	this->addChild(sp, 4, 0);
+
+	Sprite* s_candidate = SelectSprite::createWithData("\\res\\SelectScene\\select_candidate.png", _sList, s_canUse, false);
+	Sprite* i_candidate = SelectSprite::createWithData("\\res\\SelectScene\\select_candidate.png", _iList, i_canUse, true);
+	Sprite* s_selecting = SelectSprite::createWithCountMax("\\res\\SelectScene\\select_selecting.png", s_canSel, false);
+	Sprite* i_selecting = SelectSprite::createWithCountMax("\\res\\SelectScene\\select_selecting.png", i_canSel, true);
+
+	//设置UI
+	s_candidate->setAnchorPoint(Point::ZERO);
+	i_candidate->setAnchorPoint(Point::ZERO);
+	s_selecting->setAnchorPoint(Point::ZERO);
+	i_selecting->setAnchorPoint(Point::ZERO);
+
+	int yForUi = winSize.height/2;
+
+	s_candidate->setPosition(0, 0);
+	i_candidate->setPosition(0, winSize.height-i_candidate->getContentSize().height);
+	s_selecting->setPosition(winSize.width*0.2, yForUi - s_selecting->getContentSize().height/2);
+	i_selecting->setPosition(winSize.width*0.8, yForUi-100);
+
+	this->addChild(s_candidate, 4, CANDIDATE_S_LAYER_TAG);
+	this->addChild(i_candidate, 3, CANDIDATE_I_LAYER_TAG);
+	this->addChild(s_selecting, 2, SELECTING_S_LAYER_TAG);
+	this->addChild(i_selecting, 1, SELECTING_I_LAYER_TAG);
 
 	return true;
 }
@@ -139,8 +162,8 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 			index = 0;
 		case SELECTING_S_LAYER_TAG:
 			temp = _sList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
-			((SelectSprite*)this->getChildByTag(layerIndex))->removeChild(temp, true);
-			((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->addChild(temp);
+			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, false);
+			((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->InsterSprite(temp, !index);
 			break;
 
 		case CANDIDATE_I_LAYER_TAG:
@@ -148,12 +171,13 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 		case SELECTING_I_LAYER_TAG:
 			temp = _iList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
 			((SelectSprite*)this->getChildByTag(layerIndex))->removeChild(temp, true);
-			((SelectSprite*)this->getChildByTag(SELECTING_I_LAYER_TAG - index))->addChild(temp);
+			((SelectSprite*)this->getChildByTag(SELECTING_I_LAYER_TAG - index))->InsterSprite(temp, !index);
 			break;
 
 		default:
 			break;
 		}//switch layerIndex
+		SET__SELECT__SPRITE__INDEX(0);
 	}//else if
 
 	else//点击了其他的ICON

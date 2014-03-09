@@ -11,6 +11,8 @@ public:
 
 	bool CheckPointIn(cocos2d::Point& touch_point);
 
+
+
 	//delta	移动的幅度
 	//flag	0为x轴 1为y轴
 	void Move(float delta, bool flag);
@@ -19,9 +21,8 @@ public:
 	//flag		0为待选 1为已选
 	void InsterSprite(cocos2d::Sprite* sprite, bool flag);
 
-	//index		要取出的精灵所在的index
-	//flag		0为待选 1为已选
-	cocos2d::Sprite* GetSpriteInfoIndex(unsigned int index, bool flag);
+	//从Layer中移除Child;
+	void removeChildFromLayer(cocos2d::Node* child, bool cleanup = true);
 
 	virtual bool initWithData(const std::string& filename, cocos2d::Vector<Sprite*> &list, int data, bool flag);
 	static SelectSprite* createWithData(const std::string& filename, cocos2d::Vector<Sprite*> &list, int data, bool flag);

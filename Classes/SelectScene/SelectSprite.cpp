@@ -13,6 +13,10 @@
 #define LAYER__IN__SPRITE__TAG 0
 #endif
 
+#ifndef MAX__Z__ORDER
+#define MAX__Z__ORDER 20
+#endif
+
 USING_NS_CC;
 SelectSprite::SelectSprite()
 {
@@ -49,9 +53,10 @@ void SelectSprite::_setImageFromData(Vector<Sprite*> &list, int data, bool flag)
 		{
 			str.initWithFormat("\\res\\%c\\icon\\%d.png", ch, index);
 			temp = Sprite::create(str.getCString());
-			temp->setPosition(temp->getContentSize().width*(0.5+(_count++)), positionY);
-			layer->addChild(temp, index, index);
+			temp->setPosition(temp->getContentSize().width*(0.5+(_count)), positionY);
+			layer->addChild(temp, _count, _count);
 			list.pushBack(temp);
+			++_count;
 		}
 	}
 
@@ -157,10 +162,23 @@ void SelectSprite::Move(float delta, bool flag)
 
 void SelectSprite::InsterSprite(cocos2d::Sprite* sprite, bool flag)
 {
+	Size size = this->getContentSize();
+	Layer* layer = (Layer*)getChildByTag(LAYER__IN__SPRITE__TAG);
+	if (flag)//如果该Sprite是Selecting的
+	{
+		Point pos = layer->getChildByTag(_count)->getPosition();
+		sprite->setPosition(pos);
+	}
 
+	else//如果该Sprite是Candidate的
+		sprite->setPosition(sprite->getContentSize().width*(0.5 + (_count)), size.height / 2);
+
+	layer->addChild(sprite, MAX__Z__ORDER, _count);
+	++_count;
 }
 
-Sprite* SelectSprite::GetSpriteInfoIndex(unsigned int index, bool flag)
+void SelectSprite::removeChildFromLayer(cocos2d::Node* child, bool cleanup /*= true*/)
 {
-	return nullptr;
+	--_count;
+	((Layer*)getChildByTag(LAYER__IN__SPRITE__TAG))->removeChild(child, cleanup);
 }
