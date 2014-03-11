@@ -21,8 +21,13 @@ public:
 	//flag		0为待选 1为已选
 	void InsterSprite(cocos2d::Sprite* sprite, bool flag);
 
+	//flag		0为待选 1为已选
 	//从Layer中移除Child;
-	void removeChildFromLayer(cocos2d::Node* child, bool cleanup = true);
+	void removeChildFromLayer(cocos2d::Node* child, bool flag, bool cleanup = true);
+
+	//flag		0为待选 1为已选
+	//重新设置Layer中Child的坐标
+	inline void resetChildInLayerInfoCount(bool flag);
 
 	virtual bool initWithData(const std::string& filename, cocos2d::Vector<Sprite*> &list, int data, bool flag);
 	static SelectSprite* createWithData(const std::string& filename, cocos2d::Vector<Sprite*> &list, int data, bool flag);
@@ -37,6 +42,7 @@ protected:
 
 private:
 	int _count;//当前拥有的总数
+	cocos2d::Vector<cocos2d::Sprite*> _list;
 };
 
 #endif

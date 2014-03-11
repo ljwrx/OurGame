@@ -55,6 +55,7 @@ void SelectSprite::_setImageFromData(Vector<Sprite*> &list, int data, bool flag)
 			temp = Sprite::create(str.getCString());
 			temp->setPosition(temp->getContentSize().width*(0.5+(_count)), positionY);
 			layer->addChild(temp, _count, _count);
+			_list.pushBack(temp);
 			list.pushBack(temp);
 			++_count;
 		}
@@ -174,11 +175,35 @@ void SelectSprite::InsterSprite(cocos2d::Sprite* sprite, bool flag)
 		sprite->setPosition(sprite->getContentSize().width*(0.5 + (_count)), size.height / 2);
 
 	layer->addChild(sprite, MAX__Z__ORDER, _count);
+	_list.pushBack(sprite);
 	++_count;
 }
 
-void SelectSprite::removeChildFromLayer(cocos2d::Node* child, bool cleanup /*= true*/)
+void SelectSprite::removeChildFromLayer(cocos2d::Node* child, bool flag, bool cleanup /*= true*/)
 {
 	--_count;
 	((Layer*)getChildByTag(LAYER__IN__SPRITE__TAG))->removeChild(child, cleanup);
+	_list.eraseObject((Sprite*)child, false);
+	resetChildInLayerInfoCount(flag);
+}
+
+void SelectSprite::resetChildInLayerInfoCount(bool flag)
+{
+	if (_count == 0)
+		return;
+
+	Sprite* temp = nullptr;
+	Layer* layer = (Layer*)getChildByTag(LAYER__IN__SPRITE__TAG);
+	for (int index = 0; index < _count; ++index)
+	{
+		temp = (Sprite*)_list.at(index);
+		if (flag)
+		{
+			Point pos = layer->getChildByTag(index)->getPosition();
+			temp->setPosition(pos);
+		}
+		else
+			temp->setPosition(temp->getContentSize().width*(0.5 + index), temp->getPositionY());
+	}
+	
 }

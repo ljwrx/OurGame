@@ -19,6 +19,8 @@ public:
 	static SelectLayer* createWithData(int s_canUse, int s_canSel, int i_canUse, int i_canSel);
 
 
+	
+
 	virtual bool onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 	virtual void onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *unused_event);
 	virtual void onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *unused_event);
@@ -26,6 +28,9 @@ public:
 
 private:
 	SelectLayer();
+
+	//获取某个SelectSprite内的精灵的包围盒
+	cocos2d::Rect _getSelectSpriteBoungBox(cocos2d::Sprite* sp);
 
 	//返回被触摸的对象，0为没有触摸
 	//返回的值减去1则为在list中的位置

@@ -61,7 +61,7 @@ bool SelectLayer::initWithData(int s_canUse, int s_canSel, int i_canUse, int i_c
 	s_candidate->setPosition(0, 0);
 	i_candidate->setPosition(0, winSize.height-i_candidate->getContentSize().height);
 	s_selecting->setPosition(winSize.width*0.2, yForUi - s_selecting->getContentSize().height/2);
-	i_selecting->setPosition(winSize.width*0.8, yForUi-100);
+	i_selecting->setPosition(winSize.width*0.8 - i_selecting->getContentSize().width, yForUi - i_selecting->getContentSize().height / 2);
 
 	this->addChild(s_candidate, 4, CANDIDATE_S_LAYER_TAG);
 	this->addChild(i_candidate, 3, CANDIDATE_I_LAYER_TAG);
@@ -85,12 +85,23 @@ SelectLayer* SelectLayer::createWithData(int s_canUse, int s_canSel, int i_canUs
 	return pRet;
 }
 
+Rect SelectLayer::_getSelectSpriteBoungBox(cocos2d::Sprite* sp)
+{
+	Size size = sp->getContentSize();
+	int x = sp->getPositionX() + sp->getParent()->getPositionX() + sp->getParent()->getParent()->getPositionX() - sp->getAnchorPoint().x*size.width;
+	int y = sp->getPositionY() + sp->getParent()->getPositionY() + sp->getParent()->getParent()->getPositionY() - sp->getAnchorPoint().y*size.height;
+	return Rect(x, y, size.width, size.height);
+}
+
 int SelectLayer::_checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list)
 {
+	Rect rect = Rect::ZERO;
 	int Max = list.size();
+
 	for (int index = 0; index < Max; ++index)
 	{
-		if (list.at(index)->getBoundingBox().containsPoint(touch_point))
+		rect = _getSelectSpriteBoungBox(list.at(index));
+		if (rect.containsPoint(touch_point))
 			return POINT__IN__SPRITE__INDEX(index);
 	}
 	return POINT__NOT__IN__SPRITE;
@@ -162,7 +173,7 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 			index = 0;
 		case SELECTING_S_LAYER_TAG:
 			temp = _sList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
-			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, false);
+			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
 			((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->InsterSprite(temp, !index);
 			break;
 
@@ -170,7 +181,7 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 			index = 0;
 		case SELECTING_I_LAYER_TAG:
 			temp = _iList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
-			((SelectSprite*)this->getChildByTag(layerIndex))->removeChild(temp, true);
+			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
 			((SelectSprite*)this->getChildByTag(SELECTING_I_LAYER_TAG - index))->InsterSprite(temp, !index);
 			break;
 
