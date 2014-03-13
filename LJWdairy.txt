@@ -1,3 +1,10 @@
 2014.03.02
 这周主要了解了一下oc的基础语法和修改cocox2d-iphone工程的helloworld，
 还有就是在vs中初步实现初始菜单的创建和动画的运用
+
+2014.03.11
+1、用oc实现加载plist文件数据
+2、用oc创建精灵简单实现helloworld
+3、破解xcode5运行真机
+4、创建ItemMoveSprite类实现游戏初始场景标题和按钮的移动进入
+5、创建HelloWorld类成员函数sceneChange和修改init函数实现点击按钮进行场景切换
