@@ -3,9 +3,14 @@
 
 #include "cocos2d.h"
 #include "ItemMoveSprite.h"
-#include "tinystr.h"
-#include "tinyxml.h"
+//#include "tinystr.h"
+//#include "tinyxml.h"
 #include "CocosGUI.h"
+#include "cocostudio\CocoStudio.h"
+
+USING_NS_CC;
+
+using namespace gui;
 
 class HelloWorld : public cocos2d::LayerColor
 {
@@ -27,6 +32,8 @@ public:
     void backGameCallback(Object* pSender); 
 
 	void sceneChange(Object* pSender);
+
+	//void touchButton(cocos2d::Object *obj,TouchEventType type);
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);

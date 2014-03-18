@@ -169,14 +169,26 @@ void HelloWorld::sceneChange(Object* pSender)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
     Point origin = Director::getInstance()->getVisibleOrigin();
 
-	auto mylayout = dynamic_cast<>
+	m_layout = dynamic_cast<Layout *>(cocostudio::GUIReader::shareReader()->widgetFromJsonFile("MyUIDesign_1.ExportJson"));
 
-	secondScene->addChild(secondLayer,0);
+	secondScene->addChild(m_layout,0);
+	
+	//Button *button = dynamic_cast<Button *>(m_layout->getChildByName("GoToButton"));
+	//button->addTouchEventListener(this,toucheventselector(HelloWorld::touchButton));
 
 	Director::sharedDirector()->replaceScene(TransitionFadeTR::create(2,secondScene));
 
 }
  
+//void HelloWorld::touchButton(cocos2d::Object *obj,TouchEventType type)
+//{
+//	if (type == TOUCH_EVENT_ENDED)
+//	{
+//		Director::sharedDirector()->end();
+//		exit(0);
+//	}
+//}
+
 void HelloWorld::aboutGameCallback(Object* pSender) 
 { 
     Size size = Director::sharedDirector()->getWinSize(); 
