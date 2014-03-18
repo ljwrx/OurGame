@@ -2,6 +2,8 @@
 #ifndef __GAME__TOOL__
 #define __GAME__TOOL__
 
+#include "cocos2d.h"
+
 namespace TOOL
 {
 	//对num中特定字节进行更改
@@ -53,6 +55,22 @@ namespace TOOL
 	inline int GetLowData(int num)
 	{
 		return num & 0x0000FFFF;
+	}
+
+	template <class T>
+	inline T* GetDataFromFile(char* fileName, int *size)
+	{
+		return (T*)(cocos2d::FileUtils::getInstance()->getFileData(fileName, "rb", size));
+	}
+
+	template <class T>
+	inline void GetDataFromFile(char* fileName, T* data, int size)
+	{
+		unsigned char* ch = (unsigned char*)data;
+		FILE *f = fopen(fileName, "wb");
+		if (!fp)
+			break;
+		fwrite(ch, sizeof(T), size / sizeof(T), fp);
 	}
 
 	//num	需要更改的数据

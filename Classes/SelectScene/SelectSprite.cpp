@@ -60,7 +60,7 @@ void SelectSprite::_setImageFromData(Vector<Sprite*> &list, int data, bool flag)
 			++_count;
 		}
 	}
-
+	_countMax = _count;
 	layer->setAnchorPoint(Point::ZERO);
 	this->setAnchorPoint(Point::ZERO);
 	layer->setPosition(Point::ZERO);
@@ -95,6 +95,7 @@ void SelectSprite::_setImageFromCountMax(int max, bool flag)
 {
 	char* ch;
 	_count = 0;
+	_countMax = max;
 	Sprite* temp = nullptr;
 	Layer* layer = Layer::create();
 	int positionX = this->getContentSize().width / 2;
@@ -110,7 +111,6 @@ void SelectSprite::_setImageFromCountMax(int max, bool flag)
 		temp->setPosition(positionX, temp->getContentSize().height*(0.5 + index));
 		layer->addChild(temp, index, index);
 	}
-
 	layer->setAnchorPoint(Point::ZERO);
 	this->setAnchorPoint(Point::ZERO);
 	layer->setPosition(Point::ZERO);
@@ -161,6 +161,11 @@ void SelectSprite::Move(float delta, bool flag)
 		layer->setPositionX(pos.x + delta);
 }
 
+bool SelectSprite::CheckIsCanRemove()
+{
+	return _count < _countMax;
+}
+
 void SelectSprite::InsterSprite(cocos2d::Sprite* sprite, bool flag)
 {
 	Size size = this->getContentSize();
@@ -173,10 +178,10 @@ void SelectSprite::InsterSprite(cocos2d::Sprite* sprite, bool flag)
 
 	else//如果该Sprite是Candidate的
 		sprite->setPosition(sprite->getContentSize().width*(0.5 + (_count)), size.height / 2);
-
+	++_count;
 	layer->addChild(sprite, MAX__Z__ORDER, _count);
 	_list.pushBack(sprite);
-	++_count;
+	
 }
 
 void SelectSprite::removeChildFromLayer(cocos2d::Node* child, bool flag, bool cleanup /*= true*/)

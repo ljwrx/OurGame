@@ -142,7 +142,22 @@ void SelectLayer::onTouchMoved(Touch *touch, Event *unused_event)
 	Point now = touch->getLocation();
 	int selectLayerIndex = GET__SELECT__LAYER__INDEX;
 	Point delte(now.x - _nowTouchPoint.x, now.y - _nowTouchPoint.y);
-	((SelectSprite*)this->getChildByTag(0))->Move(delte.x, 0);
+
+	switch (selectLayerIndex)
+	{
+	case CANDIDATE_S_LAYER_TAG:
+	case CANDIDATE_I_LAYER_TAG:
+		((SelectSprite*)this->getChildByTag(selectLayerIndex))->Move(delte.x, false);
+		break;
+	case SELECTING_S_LAYER_TAG:
+	case SELECTING_I_LAYER_TAG:
+		((SelectSprite*)this->getChildByTag(selectLayerIndex))->Move(delte.y, true);
+		break;
+	default:
+		break;
+	}
+
+	
 
 	SET__SELECT__SPRITE__INDEX(POINT__NOT__IN__SPRITE);
 	_nowTouchPoint = now;
@@ -173,16 +188,24 @@ void SelectLayer::onTouchEnded(Touch *touch, Event *unused_event)
 			index = 0;
 		case SELECTING_S_LAYER_TAG:
 			temp = _sList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
-			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
-			((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->InsterSprite(temp, !index);
+			if (((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->CheckIsCanRemove())
+			{
+				((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
+				((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->InsterSprite(temp, !index);
+				TOOL::SetBinNum(_s_selectData, spriteIndex, index ? 1 : 0);
+			}
 			break;
 
 		case CANDIDATE_I_LAYER_TAG:
 			index = 0;
 		case SELECTING_I_LAYER_TAG:
 			temp = _iList.at(INDEX__IN__SPRITE__LISTS(spriteIndex));
-			((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
-			((SelectSprite*)this->getChildByTag(SELECTING_I_LAYER_TAG - index))->InsterSprite(temp, !index);
+			if (((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->CheckIsCanRemove())
+			{
+				((SelectSprite*)this->getChildByTag(layerIndex))->removeChildFromLayer(temp, index, true);
+				((SelectSprite*)this->getChildByTag(SELECTING_S_LAYER_TAG - index))->InsterSprite(temp, !index);
+				TOOL::SetBinNum(_i_selectData, spriteIndex, index ? 1 : 0);
+			}
 			break;
 
 		default:

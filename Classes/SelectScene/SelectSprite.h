@@ -17,6 +17,8 @@ public:
 	//flag	0为x轴 1为y轴
 	void Move(float delta, bool flag);
 
+	bool CheckIsCanRemove();
+
 	//sprite	要插入的精灵
 	//flag		0为待选 1为已选
 	void InsterSprite(cocos2d::Sprite* sprite, bool flag);
@@ -42,6 +44,7 @@ protected:
 
 private:
 	int _count;//当前拥有的总数
+	int _countMax;//上限
 	cocos2d::Vector<cocos2d::Sprite*> _list;
 };
 

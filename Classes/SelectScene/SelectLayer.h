@@ -37,8 +37,10 @@ private:
 	int _checkListInfoTouchPoint(cocos2d::Point& touch_point, cocos2d::Vector<cocos2d::Sprite*>& list);
 private:
 	int _count;
-	int _selectData;
+	
 	int _selectIndex;
+	int _i_selectData;
+	int _s_selectData;
 	cocos2d::Point _nowTouchPoint;
 	cocos2d::Vector<cocos2d::Sprite*> _sList;
 	cocos2d::Vector<cocos2d::Sprite*> _iList;
