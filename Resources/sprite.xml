@@ -1,0 +1,35 @@
+<FireSprites>
+<Soldier ID="1">
+<Name>soldier1</Name>
+<Picurl>in_001.png</Picurl>
+<ATK>30</ATK>
+<LIFE>20</LIFE>
+<SPEED>5</SPEED>
+<Skill>直线前进并攻击进入一定范围的单位</Skill>
+</Soldier>
+<Soldier ID="2">
+<Name>soldier2</Name>
+<Picurl>in_011.png</Picurl>
+<ATK>25</ATK>
+<LIFE>25</LIFE>
+<SPEED>0</SPEED>
+<Skill>无法移动，可攻击进入一定范围的单位</Skill>
+</Soldier>
+<Archer ID="1">
+<Name>archer1</Name>
+<Picurl>in_007.png</Picurl>
+<ATK>15</ATK>
+<LIFE>1</LIFE>
+<Skill>可攻击直线上的一个单位</Skill>
+</Archer>
+</FireSprites>
+<Master>
+<Bear ID="1">
+<Name>bear1</Name>
+<Picurl>images/bear1.png</Picurl>
+<ATK>30</ATK>
+<LIFE>20</LIFE>
+<SPEED>5</SPEED>
+<Skill>直线前进并攻击进入一定范围的单位</Skill>
+</Bear>
+</Master>
