@@ -20,7 +20,7 @@ public:
 	static ScissorSpriteNode* createWithSpriteFrame(cocos2d::SpriteFrame *pSpriteFrame);
 	static ScissorSpriteNode* createWithSpriteFrameName(const std::string& spriteFrameName);
 
-	void visit();
+	virtual void visit();
 };
 
 #endif

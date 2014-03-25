@@ -2,17 +2,8 @@
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
-#include "ItemMoveSprite.h"
-//#include "tinystr.h"
-//#include "tinyxml.h"
-#include "CocosGUI.h"
-#include "cocostudio\CocoStudio.h"
 
-USING_NS_CC;
-
-using namespace gui;
-
-class HelloWorld : public cocos2d::LayerColor
+class HelloWorld : public cocos2d::Layer
 {
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
@@ -25,21 +16,15 @@ public:
     void menuCloseCallback(Object* pSender);
     
 	void onEnter(); 
-
+ 
     void startGameCallback(Object* pSender); 
     void aboutGameCallback(Object* pSender); 
     void exitGameCallback(Object* pSender); 
     void backGameCallback(Object* pSender); 
 
-	void sceneChange(Object* pSender);
-
-	//void touchButton(cocos2d::Object *obj,TouchEventType type);
-
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 
-private:
-	gui::Layout *m_layout;
-};
+}; 
 
 #endif // __HELLOWORLD_SCENE_H__

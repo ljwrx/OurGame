@@ -22,7 +22,7 @@ bool HelloWorld::init()
 {
     //////////////////////////////
     // 1. super init first
-	if ( !LayerColor::initWithColor(ccc4(255,255,255,255)))
+    if ( !Layer::init() )
     {
         return false;
     }
@@ -47,8 +47,6 @@ bool HelloWorld::init()
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Point::ZERO);
     this->addChild(menu, 1);
-	
-	auto size = Director::sharedDirector()->getWinSize();
 
     /////////////////////////////
     // 3. add your codes below...
@@ -56,93 +54,83 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
     
-    //auto label = LabelTTF::create("Hello World", "Arial", 24);
-    //
-    //// position the label on the center of the screen
-    //label->setPosition(Point(origin.x + visibleSize.width/2,
-    //                        origin.y + visibleSize.height - label->getContentSize().height));
+    auto label = LabelTTF::create("Hello World", "Arial", 24);
+    
+    // position the label on the center of the screen
+    label->setPosition(Point(origin.x + visibleSize.width/2,
+                            origin.y + visibleSize.height - label->getContentSize().height));
 
-    //// add the label as a child to this layer
-    //this->addChild(label, 1);
+    // add the label as a child to this layer
+    this->addChild(label, 1);
 
 	//动态载入标题文字图片
+    //auto topsprite = Sprite::create("top.png"); 
+    //addChild(topsprite, 0); 
+    //topsprite->setPosition(Point(origin.x + visibleSize.width/2, origin.y + visibleSize.height - 50)); 
+	//topsprite->
 
-	Sprite *startGameIconNormal = Sprite::create("StartGameNormal.png");
-	Sprite *startGameIconSelected = Sprite::create("StartGameSelected.png");
-	Sprite *optionIconNormal = Sprite::create("OptionNormal.png");
-	Sprite *optionIconSelected = Sprite::create("OptionSelected.png");
-	Sprite *exitGameIcon = Sprite::create("ExitGameNormal.png");
-	Sprite *exitGameIconSelected = Sprite::create("ExitGameSelected.png");
+    // add "HelloWorld" splash screen"
+    //auto sprite = Sprite::create("HelloWorld.png");
 
-	Sprite *title1 = Sprite::create("StartGameNormal.png");
-	this->addChild(title1,1);
-	Sprite *title2 = Sprite::create("StartGameNormal.png");
-	this->addChild(title2,1);
+    // position the sprite on the center of the screen
+    //sprite->setPosition(Point(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
-	ItemMoveSprite *im = new ItemMoveSprite();
-	im->titleMove(title1,Point(0,size.height),1.0,1.0,3.0,1,0);
-	im->titleMove(title2,Point(size.width,size.height),0,1.0,3.0,-1,0);
+    // add the sprite as a child to this layer
+    //this->addChild(sprite, 0);
 
-	MenuItemSprite *Start = MenuItemSprite::create(startGameIconNormal,startGameIconSelected,(Object*)this,menu_selector(HelloWorld::sceneChange));
-	im->menuIconMove(Start,Point(0,size.height*2/3),Point(size.width/2,size.height*2/3),1.5,0);
-	MenuItemSprite *Option = MenuItemSprite::create(optionIconNormal,optionIconSelected,(Object*)this,menu_selector(HelloWorld::sceneChange));
-	im->menuIconMove(Option,Point(size.width,size.height/2),Point(size.width/2,size.height/2),1.5,0);
-	MenuItemSprite *Exit = MenuItemSprite::create(exitGameIcon,exitGameIconSelected,(Object*)this,menu_selector(HelloWorld::sceneChange));
-	im->menuIconMove(Exit,Point(size.width/2,0),Point(size.width/2,size.height/3),1.5,0);
+	auto size = Director::sharedDirector()->getWinSize();
 
-	Menu *pStartMenu = Menu::create(Start,Option,Exit,nullptr);
-	pStartMenu->setPosition(Point::ZERO);
-	this->addChild(pStartMenu,1);
-	//this->addChild(start,3);
-	im->autorelease();
+	auto pStartLabel = LabelTTF::create("Start Game","Arial",30);
+	auto pExitLabel = LabelTTF::create("Exit Game","Arial",30);
+	auto pAboutLabel = LabelTTF::create("About Game","Arial",30);
+    
+	MenuItemLabel *pStartItem = MenuItemLabel::create(pStartLabel,this,menu_selector(HelloWorld::startGameCallback));
+	MenuItemLabel *pExitItem = MenuItemLabel::create(pExitLabel,this,menu_selector(HelloWorld::exitGameCallback));
+	MenuItemLabel *pAboutItem = MenuItemLabel::create(pAboutLabel,this,menu_selector(HelloWorld::aboutGameCallback));
 
-	//auto pStartLabel = LabelTTF::create("Start Game","Arial",30);
-	//auto pExitLabel = LabelTTF::create("Exit Game","Arial",30);
-	//auto pAboutLabel = LabelTTF::create("About Game","Arial",30);
- //   
-	//MenuItemLabel *pStartItem = MenuItemLabel::create(pStartLabel,this,menu_selector(HelloWorld::startGameCallback));
-	//MenuItemLabel *pExitItem = MenuItemLabel::create(pExitLabel,this,menu_selector(HelloWorld::exitGameCallback));
-	//MenuItemLabel *pAboutItem = MenuItemLabel::create(pAboutLabel,this,menu_selector(HelloWorld::aboutGameCallback));
+	Menu *pStartMenu = Menu::create(pStartItem,NULL);
+	Menu *pExitMenu = Menu::create(pExitItem, NULL); 
+    Menu *pAboutMenu = Menu::create(pAboutItem, NULL); 
 
-	//Menu *pStartMenu = Menu::create(pStartItem,NULL);
-	//Menu *pExitMenu = Menu::create(pExitItem, NULL); 
- //   Menu *pAboutMenu = Menu::create(pAboutItem, NULL); 
-
-	//pStartItem->setPosition(Point(size.width / 2, size.height / 2 + 50)); 
- //   pExitItem->setPosition(Point(size.width / 2, size.height / 2  - 50 )); 
- //   pAboutItem->setPosition(Point(size.width / 2, size.height / 2 )); 
+	pStartItem->setPosition(Point(size.width / 2, size.height / 2 + 50)); 
+    pExitItem->setPosition(Point(size.width / 2, size.height / 2  - 50 )); 
+    pAboutItem->setPosition(Point(size.width / 2, size.height / 2 )); 
  
- //   addChild(pStartMenu, 2); 
- //   addChild(pExitMenu, 2); 
- //   addChild(pAboutMenu, 2); 
+    pStartMenu->setPosition(CCPointZero); 
+    pExitMenu->setPosition(CCPointZero); 
+    pAboutMenu->setPosition(CCPointZero); 
+ 
+    addChild(pStartMenu, 2); 
+    addChild(pExitMenu, 2); 
+    addChild(pAboutMenu, 2); 
 
 	//添加背景 
     auto sprite = Sprite::create("HelloWorld.png"); 
     addChild(sprite, 0); 
     sprite->setPosition(Point(size.width / 2, size.height / 2)); 
  
- //   //添加动画 
-	//SpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("bear.plist"); 
-	//SpriteBatchNode* spritesheet = SpriteBatchNode::create("bear.png"); 
- //
-	//addChild(spritesheet, 1);
+    //添加动画 
+	SpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("bear.plist"); 
+	SpriteBatchNode* spritesheet = SpriteBatchNode::create("bear.png"); 
+ 
+	addChild(spritesheet, 1);
 
- //   Vector<SpriteFrame *> animFrames; 
- //   char str[20]; 
- //   for (int i=1; i<=6; i++) 
- //   { 
- //       sprintf(str, "bear%d.png", i); 
-	//	animFrames.insert(i-1,SpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(str)) ;
- //   } 
- //
- //   Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f); 
+    Vector<SpriteFrame *> animFrames; 
+    char str[20]; 
+    for (int i=1; i<=6; i++) 
+    { 
+        sprintf(str, "bear%d.png", i); 
+		animFrames.insert(i-1,SpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(str)) ;
+    } 
+ 
+    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f); 
 
-	//Sprite *bear = Sprite::createWithSpriteFrameName("bear1.png");
-	//bear->setPosition(ccp(size.width / 2, size.height / 2));
+	Sprite *bear = Sprite::createWithSpriteFrameName("bear1.png");
+	bear->setPosition(ccp(size.width / 2, size.height / 2));
 
- //   ActionInterval* walkAction = RepeatForever::create(Animate::create(animation)); 
- //   bear->runAction(walkAction); 
-	//spritesheet->addChild(bear);
+    ActionInterval* walkAction = RepeatForever::create(Animate::create(animation)); 
+    bear->runAction(walkAction); 
+	spritesheet->addChild(bear);
  
     //熊运动轨迹 
     //ActionInterval* move1 = MoveBy::create(3,Point(size.width / 4, size.height / 4)); 
@@ -150,8 +138,9 @@ bool HelloWorld::init()
     //ActionInterval* move2 = MoveBy::create(3,Point(size.width / 4, -size.height / 4)); 
     //ActionInterval* move2_back = move2->reverse(); 
     //spritesheet->runAction(RepeatForever::create((ActionInterval*)(Sequence::create(move1, move1,move2,move2, move2_back,move2_back,move1_back,move1_back, NULL)))); 
-	return true;
+
 } 
+ 
 
 void HelloWorld::menuCloseCallback(Object* pSender)
 {
@@ -162,33 +151,7 @@ void HelloWorld::menuCloseCallback(Object* pSender)
 #endif
 }
 
-void HelloWorld::sceneChange(Object* pSender)
-{
-	Scene *secondScene = Scene::create();
-	Layer *secondLayer = Layer::create();
-	Size visibleSize = Director::getInstance()->getVisibleSize();
-    Point origin = Director::getInstance()->getVisibleOrigin();
-
-	m_layout = dynamic_cast<Layout *>(cocostudio::GUIReader::shareReader()->widgetFromJsonFile("MyUIDesign_1.ExportJson"));
-
-	secondScene->addChild(m_layout,0);
-	
-	//Button *button = dynamic_cast<Button *>(m_layout->getChildByName("GoToButton"));
-	//button->addTouchEventListener(this,toucheventselector(HelloWorld::touchButton));
-
-	Director::sharedDirector()->replaceScene(TransitionFadeTR::create(2,secondScene));
-
-}
  
-//void HelloWorld::touchButton(cocos2d::Object *obj,TouchEventType type)
-//{
-//	if (type == TOUCH_EVENT_ENDED)
-//	{
-//		Director::sharedDirector()->end();
-//		exit(0);
-//	}
-//}
-
 void HelloWorld::aboutGameCallback(Object* pSender) 
 { 
     Size size = Director::sharedDirector()->getWinSize(); 

@@ -4,7 +4,7 @@
 
 #include "cocos2d.h"
 
-class SelectMapLayer : public cocos2d::Menu
+class SelectMapLayer : public cocos2d::Layer
 {
 public:
 	~SelectMapLayer();
@@ -19,17 +19,28 @@ public:
 	virtual void onTouchCancelled(cocos2d::Touch* touch, cocos2d::Event* event);
 	virtual void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
 
-	bool initWithArray(int r, const cocos2d::Vector<cocos2d::MenuItem*>& arrayOfItems);
+	void onEnter(void);
 
-	static SelectMapLayer* createWithArray(int r, const cocos2d::Vector<cocos2d::MenuItem*>& arrayOfItems);
-	static SelectMapLayer* create(int r, cocos2d::MenuItem* item, ...) CC_REQUIRES_NULL_TERMINATION;
-	static SelectMapLayer* createWithItems(int r, cocos2d::MenuItem *firstItem, va_list args);
+	bool initWithData(int _r, unsigned int data);
+	static SelectMapLayer* createWithData(int r, unsigned int data);
+
 private: 
 	SelectMapLayer();
 	void _setItemVisibleInfoPosition(cocos2d::Node* node);
+	void _showSmlGear(void);
+	void _hideSmlGear(void);
+	void _setSmlGearVisible(cocos2d::Node*, void* flag);
+	int _loadMapDataFromFile(int mapIndex);
+
+	void _hideMapCover();
+	void _showMapCover();
+	void _hideLevelCover();
+	void _showLevelCover();
+
 private:
-	int _r;//°ë¾¶
+	int _selectingGear;
 	cocos2d::Point _lastTouch;
+	std::string _levelData;
 };
 
 #endif
