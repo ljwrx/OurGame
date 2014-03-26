@@ -37,9 +37,10 @@ protected:
 	GearSprite();
 private:
 	void _stopAllActions(void);
+	float _getTouchRotation(cocos2d::Touch* touch);
 private:
 	GearKind tag;
-	cocos2d::Point _lastTouch;
+	float _lastRotation;
 };
 
 #endif

@@ -9,11 +9,12 @@ USING_NS_CC;
 #define BIG_MAP_IMAGE_NAME_FORMAT	"res\\SelevtMapRec\\Map\\%d.png"
 #define SML_MAP_IMAGE_NAME_FORMAT	"res\\SelevtMapRec\\Map-%d\\%d.png"
 
-#define Deviation					10
+#define Deviation					10.0f
 #define PI							3.1415926
-#define InRadians360				2*PI
-#define InAngle360					360
-#define RotateSPD					60
+#define InRadians360				2.0f*PI
+#define InAngle360					360.0f
+#define InAngleHalf360				180.0f
+#define RotateSPD					60.0f
 
 GearSprite::GearSprite()
 {
@@ -118,7 +119,12 @@ bool GearSprite::onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event)
 	if (loc.x*loc.x + loc.y*loc.y <= Rr*Rr)
 	{
 		_stopAllActions();
-		_lastTouch = touch->getLocation();
+
+		float lastRotation = this->getRotation();
+		this->setRotation(0);
+		_lastRotation = _getTouchRotation(touch);
+		this->setRotation(lastRotation);
+
 		return true;
 	}
 	return false;
@@ -145,53 +151,24 @@ void GearSprite::onTouchCancelled(cocos2d::Touch* touch, cocos2d::Event* event)
 }
 void GearSprite::onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event)
 {
-	Point tou = touch->getLocation();
-	float ds = TOOL::PointToPoint(_lastTouch, tou) / PI;
-	float nowRotation = this->getRotation();
+	float lastRotation = this->getRotation();
 	this->setRotation(0);
-	float dx = this->convertToNodeSpaceAR(tou).x;
-	this->setRotation(nowRotation);
-	float dy = tou.y - _lastTouch.y;
-	do
-	{
-		switch (dx>=0)
-		{
-		case true:
-			if (dy > 0)
-			{
-				ds = ds;
-			}//if tou.y >= 0
-			else if (dy < 0)
-			{
-				ds = -ds;
-			}//else if tou.y < 0
-			break;
 
-		case false:
-			if (dy > 0)
-			{
-				ds = -ds;
-			}//if tou.y >= 0
-			else if (dy < 0)
-			{
-				ds = ds;
-			}//else if tou.y < 0
-			break;
-		default:
-			break;
-		}
-		
+	float touchRotation = _getTouchRotation(touch);
+	float deltaRotation = touchRotation - _lastRotation;
 
-		if (this->getRotation() - ds > -360)
-			this->setRotation(this->getRotation() - ds);
-		else
-			this->setRotation((this->getRotation() - ds) + 360);
+	lastRotation += deltaRotation;
+	if (lastRotation > InAngle360)
+		lastRotation -= InAngle360;
+	else if (lastRotation < -InAngle360)
+		lastRotation += InAngle360;
+	this->setRotation(lastRotation);
 
-		for (auto& child : _children)
-			child->setRotation(child->getRotation() + ds);
-	} while (0);
+	lastRotation = -lastRotation;
+	for (auto child : _children)
+		child->setRotation(lastRotation);
+	_lastRotation = touchRotation;
 
-	_lastTouch = tou;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -237,4 +214,14 @@ void GearSprite::_stopAllActions(void)
 	this->stopAllActions();
 	for (auto child : _children)
 		child->stopAllActions();
+}
+
+float GearSprite::_getTouchRotation(Touch* touch)
+{
+	Point touchPoint = this->convertTouchToNodeSpaceAR(touch);
+
+	if (touchPoint.x == 0 && touchPoint.y == 0)
+		return _lastRotation;
+	else
+		return -atan2f(touchPoint.y, touchPoint.x) / PI*InAngleHalf360;
 }
