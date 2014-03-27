@@ -27,6 +27,7 @@ USING_NS_CC;
 
 
 SelectMapLayer::SelectMapLayer()
+	:_isHide(true)
 {
 }
 
@@ -98,15 +99,11 @@ bool SelectMapLayer::onTouchBegan(Touch* touch, Event* event)
 {
 	if (((GearSprite*)this->getChildByTag(BIG_GEAR_IN_LAYER_TAG))->onTouchBegan(touch, event))
 	{
-		_hideSmlGear();
-		_hideMapCover();
-		_hideLevelCover();
 		_selectingGear = BIG_GEAR_IN_LAYER_TAG;
 		return true;
 	}
 	else if (((GearSprite*)this->getChildByTag(SML_GEAR_IN_LAYER_TAG))->onTouchBegan(touch, event))
 	{
-		_hideLevelCover();
 		_selectingGear = SML_GEAR_IN_LAYER_TAG;
 		return true;
 	}
@@ -122,13 +119,15 @@ void SelectMapLayer::onTouchEnded(Touch* touch, Event* event)
 		GearSprite* temp = (GearSprite*)this->getChildByTag(SML_GEAR_IN_LAYER_TAG);
 		temp->initWithData(_loadMapDataFromFile(((GearSprite*)this->getChildByTag(_selectingGear))->getSelectingMapIndex())
 						, ((GearSprite*)this->getChildByTag(_selectingGear))->getSelectingMapIndex());
-		_showSmlGear();
 		_showMapCover();
 		_showLevelCover();
+		_showSmlGear();
+		_unLockHide();
 	}
 	else if (_selectingGear == SML_GEAR_IN_LAYER_TAG)
 	{
 		_showLevelCover();
+		_unLockHide();
 	}
 }
 
@@ -140,6 +139,19 @@ void SelectMapLayer::onTouchCancelled(Touch* touch, Event* event)
 void SelectMapLayer::onTouchMoved(Touch* touch, Event* event)
 {
 	((GearSprite*)this->getChildByTag(_selectingGear))->onTouchMoved(touch, event);
+	if (_selectingGear == BIG_GEAR_IN_LAYER_TAG)
+	{
+		_hideMapCover();
+		_hideLevelCover();
+		_hideSmlGear();
+		_lockHide();
+	}
+
+	else if (_selectingGear == SML_GEAR_IN_LAYER_TAG)
+	{
+		_hideLevelCover();
+		_lockHide();
+	}
 }
 
 ///////////////////////////////////////////////////////
@@ -164,97 +176,51 @@ void SelectMapLayer::onEnter(void)
 	GearSprite* temp = (GearSprite*)this->getChildByTag(SML_GEAR_IN_LAYER_TAG);
 	temp->initWithData(_loadMapDataFromFile((((GearSprite*)big)->getSelectingMapIndex()))
 					, ((GearSprite*)big)->getSelectingMapIndex());
-	_showSmlGear();
+
 	_showMapCover();
 	_showLevelCover();
+	_showSmlGear();
 	Layer::onEnter();
 }
 
 
 /////////////////////////////////
 
-void SelectMapLayer::_setItemVisibleInfoPosition(Node* node)
-{
-	if (node->getPositionX() + node->getContentSize().width / 2 <= 0)
-	{
-		getChildren().eraseObject(node);
-		getChildren().pushBack(node);
-		node->setVisible(false);
-	}
-}
-
-int SelectMapLayer::resetItemsZOrder()
-{
-	Vector<Node*>list = getChildren();
-	int Max = list.size();
-
-	int index = 0;
-	int middle = 0;
-	
-	Sprite* top = (Sprite*)list.at(0);
-	Sprite* las = (Sprite*)list.at(Max - 1);
-
-	if (Max % 2)
-		middle = (Max + 1) >> 1;
-	else
-		middle = Max >> 1;
-
-
-	Sprite* mid = (Sprite*)list.at(middle);
-	Sprite* midPlusOne = (Sprite*)list.at(middle + 1);
-
-	_setItemVisibleInfoPosition(top);
-	_setItemVisibleInfoPosition(las);
-	_setItemVisibleInfoPosition(mid);
-	_setItemVisibleInfoPosition(midPlusOne);
-
-	do
-	{
-		list.at(middle)->setZOrder(index);
-		list.at(index)->setZOrder(index);
-		++index;
-		--middle;
-	} while (middle >= index);
-	return --index;
-}
-
-MenuItem* SelectMapLayer::checkNearSel()
-{
-	int index = resetItemsZOrder();
-	int this_y = getChildByTag(index)->getPositionY();
-	int next_y = getChildByTag(index + 1)->getPositionY();
-
-	if (this_y < 0)
-		this_y = 0 - this_y;
-	if (next_y < 0)
-		next_y = 0 - next_y;
-
-	return (this_y < next_y ? (MenuItem*)getChildByTag(index) : (MenuItem*)getChildByTag(index + 1));
-
-}
-
 void SelectMapLayer::_showSmlGear(void)
 {
 	Size _winSize = Director::getInstance()->getWinSize();
 	Sprite* sml = (Sprite*)this->getChildByTag(SML_GEAR_IN_LAYER_TAG);
+	if (!_isHide)
+		return;
+
 	sml->setVisible(true);
 	sml->stopAllActions();
 	sml->runAction(Spawn::createWithTwoActions(MoveTo::create(SML_GEAR_MOVE_SPD, Point(_winSize.width*SML_GEAR_FOR_X, _winSize.height*SML_GEAR_FOR_Y))
 											, FadeIn::create(SML_GEAR_MOVE_SPD)));
 	for (auto child : sml->getChildren())
+	{
+		child->stopAllActions();
 		child->runAction(FadeIn::create(SML_GEAR_MOVE_SPD));
+	}
 }
+
 void SelectMapLayer::_hideSmlGear(void)
 {
 	Size _winSize = Director::getInstance()->getWinSize();
 	Sprite* sml = (Sprite*)this->getChildByTag(SML_GEAR_IN_LAYER_TAG);
+	if (_isHide)
+		return;
+
 	sml->stopAllActions();
 	sml->runAction(Spawn::create(MoveTo::create(SML_GEAR_MOVE_SPD, Point(_winSize.width + sml->getContentSize().width*0.5, _winSize.height*SML_GEAR_FOR_Y))
 		, FadeOut::create(SML_GEAR_MOVE_SPD)
 		, CCCallFuncND::create(this, callfuncND_selector(SelectMapLayer::_setSmlGearVisible), (void*)true)
 		, nullptr));
 	for (auto child : sml->getChildren())
+	{
+		child->stopAllActions();
 		child->runAction(FadeOut::create(SML_GEAR_MOVE_SPD));
+	}
 }
 
 void SelectMapLayer::_setSmlGearVisible(cocos2d::Node*, void* flag)
@@ -271,6 +237,8 @@ int SelectMapLayer::_loadMapDataFromFile(int mapIndex)
 
 void SelectMapLayer::_hideMapCover()
 {
+	if (_isHide)
+		return;
 	Size _winSize = Director::getInstance()->getWinSize();
 	Sprite* temp = (Sprite*)this->getChildByTag(MAP_COVER_IN_LAYER_TAG);
 	temp->stopAllActions();
@@ -281,6 +249,8 @@ void SelectMapLayer::_hideMapCover()
 
 void SelectMapLayer::_showMapCover()
 {
+	if (!_isHide)
+		return;
 	Size _winSize = Director::getInstance()->getWinSize();
 	String str;
 	str.initWithFormat(MAP_COVER_IMAGE_NAME_PATH
@@ -300,6 +270,8 @@ void SelectMapLayer::_showMapCover()
 
 void SelectMapLayer::_hideLevelCover()
 {
+	if (_isHide)
+		return;
 	Size _winSize = Director::getInstance()->getWinSize();
 	Sprite* temp = (Sprite*)this->getChildByTag(LEVEL_COVER_IN_LAYER_TAG);
 	temp->runAction(Spawn::createWithTwoActions(
@@ -309,6 +281,8 @@ void SelectMapLayer::_hideLevelCover()
 
 void SelectMapLayer::_showLevelCover()
 {
+	if (!_isHide)
+		return;
 	Size _winSize = Director::getInstance()->getWinSize();
 	String str;
 	str.initWithFormat(LEVEL_COVER_IMAGE_NAME_PATH

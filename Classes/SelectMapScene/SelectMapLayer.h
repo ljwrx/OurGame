@@ -9,9 +9,6 @@ class SelectMapLayer : public cocos2d::Layer
 public:
 	~SelectMapLayer();
 
-	//
-	int resetItemsZOrder();
-	cocos2d::MenuItem* checkNearSel();
 
 	//´¥ÃþÏà¹Ø
 	virtual bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
@@ -26,7 +23,6 @@ public:
 
 private: 
 	SelectMapLayer();
-	void _setItemVisibleInfoPosition(cocos2d::Node* node);
 	void _showSmlGear(void);
 	void _hideSmlGear(void);
 	void _setSmlGearVisible(cocos2d::Node*, void* flag);
@@ -37,7 +33,11 @@ private:
 	void _hideLevelCover();
 	void _showLevelCover();
 
+	inline void _lockHide(void){ _isHide = true; };
+	inline void _unLockHide(void){ _isHide = false; };
+
 private:
+	bool _isHide;
 	int _selectingGear;
 	cocos2d::Point _lastTouch;
 	std::string _levelData;
