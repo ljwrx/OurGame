@@ -1,4 +1,5 @@
 #include "SelectSprite.h"
+#include "UserData.h"
 #include "Tool.h"
 
 #ifndef SELECT__DATA__MAX
@@ -37,15 +38,22 @@ void SelectSprite::_setImageFromData(Vector<Sprite*> &list, int data, bool flag)
 {
 	char ch;
 	_count = 0;
+	int data = 0;
 	cocos2d::String str;
 	Sprite* temp = nullptr;
 	Layer* layer = Layer::create();
 	int positionY = this->getContentSize().height / 2;
 
 	if (flag)
+	{
 		ch = 'i';
+		data = UserData::getInstance()->getISelData();
+	}
 	else
+	{
 		ch = 's';
+		data = UserData::getInstance()->getSSelData();
+	}
 
 	for (int index = 0; index < SELSCT__DATA__MAX; ++index)
 	{

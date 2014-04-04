@@ -4,6 +4,12 @@
 
 #include "cocos2d.h"
 
+
+#define PI							3.1415926f
+#define InRadians360				6.2831853f
+#define InAngle360					360.0f
+#define InAngleHalf360				180.0f
+
 namespace TOOL
 {
 	///////////////////////////////////////////////////////////////////////////////
@@ -13,7 +19,7 @@ namespace TOOL
 	//对num中特定字节进行更改
 	//num	元数据
 	//index	需要获取的位置
-	inline int GetBinNum(int num, int index)
+	inline int GetBinNum(unsigned int num, int index)
 	{
 		return (num >> (index - 1)) & 1;
 	}
@@ -22,7 +28,7 @@ namespace TOOL
 	//num	元数据
 	//index 需要更改的字节位置
 	//flag	更改的数据
-	inline void SetBinNum(int& num, int index, int flag)
+	inline void SetBinNum(unsigned int& num, int index, int flag)
 	{
 		--index;
 		num = (num&~(1 << index)) | (flag << index);
@@ -33,7 +39,7 @@ namespace TOOL
 	//num	元数据
 	//index	需要获取的数据所在的组
 	//num以8位为一组,即一组为一个0x000000FF
-	inline int GetHexNum(int num, int index)
+	inline int GetHexNum(unsigned int num, int index)
 	{
 		return (num >> (8 * (index - 1))) & 0x000000FF;
 	}
@@ -43,7 +49,7 @@ namespace TOOL
 	//index 需要获取的数据所在的组
 	//flag	更改的数据
 	//num以8位为一组,即一组为一个0x000000FF
-	inline void SetHexNum(int& num, int index, int flag)
+	inline void SetHexNum(unsigned int& num, int index, int flag)
 	{
 		--index;
 		num = (num&~(0x000000FF << index)) | (flag << 8 * index);
@@ -51,7 +57,7 @@ namespace TOOL
 
 
 	//获取高16位数据
-	inline int GetHigData(int num)
+	inline int GetHigData(unsigned int num)
 	{
 		return num >> 16;
 	}
@@ -59,7 +65,7 @@ namespace TOOL
 	//num	需要更改的数据
 	//data	修改的数据
 	//设置高16位数据
-	inline void SetHigData(int& num, int data)
+	inline void SetHigData(unsigned int& num, int data)
 	{
 		num = (num & 0x0000FFFF) | (data << 16);
 	}
@@ -67,13 +73,13 @@ namespace TOOL
 	//num	需要更改的数据
 	//data	修改的数据
 	//设置低16位数据
-	inline void SetLowData(int& num, int data)
+	inline void SetLowData(unsigned int& num, int data)
 	{
 		num = (num & 0xFFFF0000) | (data & 0x0000FFFF);
 	}
 
 	//获取低16位数据
-	inline int GetLowData(int num)
+	inline int GetLowData(unsigned int num)
 	{
 		return num & 0x0000FFFF;
 	}

@@ -1,6 +1,6 @@
 #include "AppDelegate.h"
 #include "SelectMapScene\SelectMapScene.h"
-
+#include "UserData.h"
 USING_NS_CC;
 
 AppDelegate::AppDelegate() {
@@ -18,6 +18,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     director->setOpenGLView(eglView);
 	
+
     // turn on display FPS
     director->setDisplayStats(true);
 
@@ -27,7 +28,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // create a scene. it's an autorelease object
 	auto scene = SelectMapScene::create();
 
-    // run
+	UserData::getInstance();
+	// run
     director->runWithScene(scene);
 
     return true;
