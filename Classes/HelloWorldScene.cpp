@@ -22,7 +22,7 @@ bool HelloWorld::init()
 {
     //////////////////////////////
     // 1. super init first
-    if ( !Layer::init() )
+	if ( !LayerColor::initWithColor(ccc4(255,255,255,255)))
     {
         return false;
     }
@@ -47,100 +47,47 @@ bool HelloWorld::init()
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Point::ZERO);
     this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-    
-    auto label = LabelTTF::create("Hello World", "Arial", 24);
-    
-    // position the label on the center of the screen
-    label->setPosition(Point(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
-
-    // add the label as a child to this layer
-    this->addChild(label, 1);
-
-	//动态载入标题文字图片
-    //auto topsprite = Sprite::create("top.png"); 
-    //addChild(topsprite, 0); 
-    //topsprite->setPosition(Point(origin.x + visibleSize.width/2, origin.y + visibleSize.height - 50)); 
-	//topsprite->
-
-    // add "HelloWorld" splash screen"
-    //auto sprite = Sprite::create("HelloWorld.png");
-
-    // position the sprite on the center of the screen
-    //sprite->setPosition(Point(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
-    // add the sprite as a child to this layer
-    //this->addChild(sprite, 0);
-
+	
 	auto size = Director::sharedDirector()->getWinSize();
 
-	auto pStartLabel = LabelTTF::create("Start Game","Arial",30);
-	auto pExitLabel = LabelTTF::create("Exit Game","Arial",30);
-	auto pAboutLabel = LabelTTF::create("About Game","Arial",30);
-    
-	MenuItemLabel *pStartItem = MenuItemLabel::create(pStartLabel,this,menu_selector(HelloWorld::startGameCallback));
-	MenuItemLabel *pExitItem = MenuItemLabel::create(pExitLabel,this,menu_selector(HelloWorld::exitGameCallback));
-	MenuItemLabel *pAboutItem = MenuItemLabel::create(pAboutLabel,this,menu_selector(HelloWorld::aboutGameCallback));
+	//动态载入标题文字图片
 
-	Menu *pStartMenu = Menu::create(pStartItem,NULL);
-	Menu *pExitMenu = Menu::create(pExitItem, NULL); 
-    Menu *pAboutMenu = Menu::create(pAboutItem, NULL); 
+	Sprite *startGameIconNormal = Sprite::create("StartGameNormal.png");
+	Sprite *startGameIconSelected = Sprite::create("StartGameSelected.png");
+	Sprite *optionIconNormal = Sprite::create("OptionNormal.png");
+	Sprite *optionIconSelected = Sprite::create("OptionSelected.png");
+	Sprite *exitGameIcon = Sprite::create("ExitGameNormal.png");
+	Sprite *exitGameIconSelected = Sprite::create("ExitGameSelected.png");
 
-	pStartItem->setPosition(Point(size.width / 2, size.height / 2 + 50)); 
-    pExitItem->setPosition(Point(size.width / 2, size.height / 2  - 50 )); 
-    pAboutItem->setPosition(Point(size.width / 2, size.height / 2 )); 
- 
-    pStartMenu->setPosition(CCPointZero); 
-    pExitMenu->setPosition(CCPointZero); 
-    pAboutMenu->setPosition(CCPointZero); 
- 
-    addChild(pStartMenu, 2); 
-    addChild(pExitMenu, 2); 
-    addChild(pAboutMenu, 2); 
+	Sprite *title1 = Sprite::create("StartGameNormal.png");
+	this->addChild(title1,1);
+	Sprite *title2 = Sprite::create("StartGameNormal.png");
+	this->addChild(title2,1);
+
+	ItemMoveSprite *im = new ItemMoveSprite();
+	im->titleMove(title1,Point(0,size.height),1.0,1.0,3.0,1,0);
+	im->titleMove(title2,Point(size.width,size.height),0,1.0,3.0,-1,0);
+
+	MenuItemSprite *Start = MenuItemSprite::create(startGameIconNormal,startGameIconSelected,(Object*)this,menu_selector(HelloWorld::touchScroll));
+	im->menuIconMove(Start,Point(0,size.height*2/3),Point(size.width/2,size.height*2/3),1.5,0);
+	MenuItemSprite *Option = MenuItemSprite::create(optionIconNormal,optionIconSelected,(Object*)this,menu_selector(HelloWorld::sceneChange));
+	im->menuIconMove(Option,Point(size.width,size.height/2),Point(size.width/2,size.height/2),1.5,0);
+	MenuItemSprite *Exit = MenuItemSprite::create(exitGameIcon,exitGameIconSelected,(Object*)this,menu_selector(HelloWorld::topScroll));
+	im->menuIconMove(Exit,Point(size.width/2,0),Point(size.width/2,size.height/3),1.5,0);
+
+	Menu *pStartMenu = Menu::create(Start,Option,Exit,nullptr);
+	pStartMenu->setPosition(Point::ZERO);
+	this->addChild(pStartMenu,1);
+	//this->addChild(start,3);
+	im->autorelease();
 
 	//添加背景 
     auto sprite = Sprite::create("HelloWorld.png"); 
     addChild(sprite, 0); 
     sprite->setPosition(Point(size.width / 2, size.height / 2)); 
- 
-    //添加动画 
-	SpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("bear.plist"); 
-	SpriteBatchNode* spritesheet = SpriteBatchNode::create("bear.png"); 
- 
-	addChild(spritesheet, 1);
-
-    Vector<SpriteFrame *> animFrames; 
-    char str[20]; 
-    for (int i=1; i<=6; i++) 
-    { 
-        sprintf(str, "bear%d.png", i); 
-		animFrames.insert(i-1,SpriteFrameCache::sharedSpriteFrameCache()->spriteFrameByName(str)) ;
-    } 
- 
-    Animation* animation = Animation::createWithSpriteFrames(animFrames, 0.1f); 
-
-	Sprite *bear = Sprite::createWithSpriteFrameName("bear1.png");
-	bear->setPosition(ccp(size.width / 2, size.height / 2));
-
-    ActionInterval* walkAction = RepeatForever::create(Animate::create(animation)); 
-    bear->runAction(walkAction); 
-	spritesheet->addChild(bear);
- 
-    //熊运动轨迹 
-    //ActionInterval* move1 = MoveBy::create(3,Point(size.width / 4, size.height / 4)); 
-    //ActionInterval* move1_back = move1->reverse(); 
-    //ActionInterval* move2 = MoveBy::create(3,Point(size.width / 4, -size.height / 4)); 
-    //ActionInterval* move2_back = move2->reverse(); 
-    //spritesheet->runAction(RepeatForever::create((ActionInterval*)(Sequence::create(move1, move1,move2,move2, move2_back,move2_back,move1_back,move1_back, NULL)))); 
-
+    
+	return true;
 } 
- 
 
 void HelloWorld::menuCloseCallback(Object* pSender)
 {
@@ -151,7 +98,171 @@ void HelloWorld::menuCloseCallback(Object* pSender)
 #endif
 }
 
+void HelloWorld::topScroll(Object* pSender)
+{
+	Scene *thirdScene = Scene::create();
+	TopScrollView *tsv = TopScrollView::create();
+	thirdScene->addChild(tsv,1);
+	tsv->setAnchorPoint(CCPointZero);
+	tsv->setPosition(Point(-384,404));
+	Director::sharedDirector()->replaceScene(thirdScene);
+}
+
+void HelloWorld::touchScroll(Object* pSender)
+{
+	Scene *scrollScene = Scene::create();
+	scrollView *sv = scrollView::create();
+	scrollScene->addChild(sv,1);
+	sv->setPosition(Point(-384,-1024));
+	//TransitionFadeTR::create(2,scrollScene)
+	Director::sharedDirector()->replaceScene(scrollScene);
+}
+
+void HelloWorld::sceneChange(Object* pSender)
+{
+	Scene *secondScene = Scene::create();
+	Layer *secondLayer = Layer::create();
+	Size visibleSize = Director::getInstance()->getVisibleSize();
+    Point origin = Director::getInstance()->getVisibleOrigin();
+
+	rapidjson::Document* doc = new rapidjson::Document();
+	doc = HelloWorld::getJsonAll(doc,"ownsprite_json.json");
+
+	//SpriteIntro *si = SpriteIntro::create();
+	//si->initWithDoc(doc);
+	//secondLayer->addChild(si);
+
+	//tableScroll *ts = tableScroll::create();
+	//secondScene->addChild(ts,1);
+//////////////////////////////////////////////////////////////////////////////DialogMessage
+	//DialogMessage *dm = DialogMessage::create();
+	//dm->initDialog("saber.png","saber");
+	//secondScene->addChild(dm,1);
+	//dm->setPosition(visibleSize.width/4,visibleSize.height/4);
+	//dm->setScale(0.01);
+	//FiniteTimeAction *action1 = ScaleBy::create(2, 100);
+	//FiniteTimeAction *action2 = RotateBy::create(2,360);
+	//dm->runAction(Spawn::createWithTwoActions(action1,action2));
+//////////////////////////////////////////////////////////////////////////////
+	//rapidjson::Value* v = new rapidjson::Value;
+	//int p = 1;
+	//v = HelloWorld::getJsonOne(v,doc,p);
+	////rapidjson::Value* v = HelloWorld::getJsonAll(doc,"ownsprite_json.json");
+	//name = (*v)[2].GetString();
+	//std::string rs = "ownimage/"+name+".png";
+
+
+	//m_layout = dynamic_cast<Layout *>(cocostudio::GUIReader::shareReader()->widgetFromJsonFile("D:/CCxGame/Resources/ChangeUI/ChangeUI.ExportJson"));
+
+	//secondScene->addChild(m_layout,1);
+
+	//MenuItemImage *normalpic = MenuItemImage::create(rs,NULL,NULL,(Object *)this,menu_selector(HelloWorld::sceneChange));
+
+	//Button *exitbutton = dynamic_cast<Button *>(m_layout->getChildByTag(UI_EXITBUTTON));
+	//exitbutton->addTouchEventListener(this,toucheventselector(HelloWorld::touchButton));
+
+
+	//DialogMessage *dMsg = DialogMessage::sharedDialogMessage();
+	//secondLayer->addChild(dMsg);
+
+	//secondScene->addChild(secondLayer,1);
+
+	Director::sharedDirector()->replaceScene(TransitionFadeTR::create(2,secondScene));
+	delete doc;
+	//delete v;
+}
  
+void HelloWorld::touchButton(Object *obj,TouchEventType evenType)
+{
+	auto button = dynamic_cast<Button *>(obj);
+	int tag = button->getTag();
+	switch (evenType)
+	{
+	case TouchEventType::TOUCH_EVENT_ENDED:
+		if (tag == UI_EXITBUTTON)
+		{
+			Director::sharedDirector()->end();
+			exit(0);
+		}
+	default:
+		break;
+	}
+}
+
+rapidjson::Document* HelloWorld::getJsonAll(rapidjson::Document* doc,std::string filename)
+{
+	if (!FileUtils::getInstance()->isFileExist(filename))
+	{
+		log("json file is not exit [%s]",filename);
+		return nullptr;
+	}
+	std::string data = FileUtils::getInstance()->getStringFromFile(filename);
+	doc->Parse<rapidjson::kParseDefaultFlags>(data.c_str());
+
+	if (doc->HasParseError() || !doc->IsArray())
+	{
+		log("get json data err!");
+		return nullptr;
+	}
+
+	return doc;
+}
+
+rapidjson::Value* HelloWorld::getJsonOne(rapidjson::Value* v,rapidjson::Document* doc,int id)
+{
+	
+	for(unsigned int i=1;i<doc->Size();i++)
+    {
+        (*v)=(*doc)[i];
+
+        int vid;//ID
+  
+		//按下标提取  
+        int a=0;  
+        vid=(*v)[a++].GetInt();
+		if (vid == id)
+		{
+			break;
+		}
+    }
+
+    return v;
+}
+
+//rapidjson::Value* HelloWorld::getJsonAll(rapidjson::Document* doc,std::string filename)
+//{
+//	if (!FileUtils::getInstance()->isFileExist(filename))
+//	{
+//		log("json file is not exit [%s]",filename);
+//		return nullptr;
+//	}
+//	std::string data = FileUtils::getInstance()->getStringFromFile(filename);
+//	doc->Parse<rapidjson::kParseDefaultFlags>(data.c_str());
+//
+//	if (doc->HasParseError() || !doc->IsArray())
+//	{
+//		log("get json data err!");
+//		return nullptr;
+//	}
+//	rapidjson::Value* v = new rapidjson::Value;
+//	for(unsigned int i=1;i<doc->Size();i++)
+//    {
+//        (*v)=(*doc)[i];
+//
+//        int id;//ID
+//  
+//		//按下标提取  
+//        int a=0;  
+//        id=(*v)[a++].GetInt();
+//		if (id == 1)
+//		{
+//			break;
+//		}
+//    }
+//
+//    return v;
+//}
+
 void HelloWorld::aboutGameCallback(Object* pSender) 
 { 
     Size size = Director::sharedDirector()->getWinSize(); 
@@ -164,7 +275,7 @@ void HelloWorld::aboutGameCallback(Object* pSender)
     layer->addChild(label, 1); 
  
     //返回按钮 
-    LabelTTF* pBackLabel = LabelTTF::create("Back", "Arial", 30); 
+    LabelTTF* pBackLabel = LabelTTF::create("Back", "Arial", 30);
     MenuItemLabel* pBackItem = MenuItemLabel::create(pBackLabel, this, menu_selector(HelloWorld::backGameCallback)); 
     Menu* pBackMenu = Menu::create(pBackItem, NULL); 
     pBackItem->setPosition(Point(size.width  - 50, 50)); 
